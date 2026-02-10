@@ -8,6 +8,7 @@ import StartScreen from './components/StartScreen'
 import { Question } from './components/Question'
 import Options from './components/Options'
 import NextButton from './components/NextButton'
+import Progress from './components/Progress'
 
 const initialState = {
   questions: [],
@@ -52,8 +53,12 @@ function reducer(state, action) {
 
 const App = () => {
   const api = "http://localhost:9000/questions"
-  const [{questions, status, index, answer}, dispatch] = useReducer(reducer, initialState);
+  const [{questions, status, index, answer, points}, dispatch] = useReducer(reducer, initialState);
   const numQuestions = questions.length;
+  const maxPossiblePoints = questions.reduce((prev, curr, i)=> {
+    return prev + curr.points
+
+  }, 0)
 
 
 
@@ -74,6 +79,7 @@ const App = () => {
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
         {status === "ready" && <StartScreen numQuestions={numQuestions} dispatch={dispatch} />}
+        {status === "active" && <Progress index={index} numQuestions={numQuestions} points={points} maxPossiblePoints= {maxPossiblePoints} answer={answer}/>}
         {status === "active" && <Question questions= {questions[index]} dispatch= {dispatch} answer={answer} />}
       </Main>
     </div>
